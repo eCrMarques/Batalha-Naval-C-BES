@@ -1,5 +1,51 @@
 #include <stdio.h>
 
+void Colocar_Navio(int tabuleiro[10][10], char linha[10], int numero_tabuleiro, int posicao_tabuleiro, int tipo_navio, char letra_navio, int numero_navio, int direcao_diagonal) {
+
+
+    switch (tipo_navio) {
+        case 1: // Navio horizontal
+            if (numero_tabuleiro == numero_navio && letra_navio != 'A' && letra_navio != 'J') {
+                if (posicao_tabuleiro >= 0 && posicao_tabuleiro < 10) {
+                    if (linha[posicao_tabuleiro] == letra_navio ||
+                        (posicao_tabuleiro > 0 && linha[posicao_tabuleiro - 1] == letra_navio) ||
+                        (posicao_tabuleiro < 9 && linha[posicao_tabuleiro + 1] == letra_navio)) {
+                        tabuleiro[numero_tabuleiro - 1][posicao_tabuleiro] = 3;
+                    }
+                }
+            }
+            break;
+
+        case 2: // Navio vertical
+            if (letra_navio == linha[posicao_tabuleiro] && numero_navio != 1 && numero_navio != 10) {
+                if (numero_tabuleiro == numero_navio || numero_tabuleiro == numero_navio - 1 || numero_tabuleiro == numero_navio + 1) {
+                    tabuleiro[numero_tabuleiro - 1][posicao_tabuleiro] = 3;
+                }
+            }
+            break;
+
+        case 3: // Navio diagonal
+            if (letra_navio != 'A' && letra_navio != 'J' && numero_navio != 1 && numero_navio != 10) {
+                if (numero_tabuleiro == numero_navio && linha[posicao_tabuleiro] == letra_navio) {
+                    tabuleiro[numero_tabuleiro - 1][posicao_tabuleiro] = 3;
+                } else if (numero_tabuleiro == numero_navio - 1 && posicao_tabuleiro + direcao_diagonal >= 0 && posicao_tabuleiro + direcao_diagonal < 10) {
+                    if (linha[posicao_tabuleiro + direcao_diagonal] == letra_navio) {
+                        tabuleiro[numero_tabuleiro - 1][posicao_tabuleiro] = 3;
+                    }
+                } else if (numero_tabuleiro == numero_navio + 1 && posicao_tabuleiro - direcao_diagonal >= 0 && posicao_tabuleiro - direcao_diagonal < 10) {
+                    if (linha[posicao_tabuleiro - direcao_diagonal] == letra_navio) {
+                        tabuleiro[numero_tabuleiro - 1][posicao_tabuleiro] = 3;
+                    }
+                }
+            }
+            break;
+
+        default:
+            printf("Tipo de navio inválido!\n");
+            break;
+    }
+}
+
 int main () {
     char linha [10] = {'A','B','C','D','E','F','G','H','I','J'};
     int tabuleiro [10][10];
@@ -12,6 +58,10 @@ int main () {
 
     int numero_navio_diagonal = 5 ;
     char letra_navio_diagonal = 'B';
+
+    int numero_navio_diagonal_invertida = 5 ;
+    char letra_navio_diagonal__invertida = 'B';
+
     int direcao_diagonal = -1;
 
     for (int i = 0; i<=10; i++){
@@ -24,30 +74,16 @@ int main () {
                 printf(" %c",linha[j]);
             }else{
                 tabuleiro[i-1][j] = 0;
-                if (i == numero_navio_horizontal && letra_navio_horizontal != 'A' && letra_navio_horizontal != 'J') {
-                    // Navio horizontal
-                    if (j >= 0 && j < 10) {
-                        if (linha[j+1] == letra_navio_horizontal || linha[j] == letra_navio_horizontal || linha[j-1] == letra_navio_horizontal)
-                        tabuleiro[i-1][j] = 3;
-                    }
-                }
+                
+                // Navio horizontal
+                Colocar_Navio(tabuleiro, linha, i, j, 1, letra_navio_horizontal, numero_navio_horizontal, direcao_diagonal);
                 // Navio vertical
-                if (letra_navio_vertical == linha[j] && numero_navio_vertical != 1 && numero_navio_vertical != 10) {
-                    if (i == numero_navio_vertical || i == numero_navio_vertical-1 || i == numero_navio_vertical+1) {
-                        tabuleiro[i-1][j] = 3;
-                    }
-                }
+                Colocar_Navio(tabuleiro, linha, i, j, 2, letra_navio_vertical, numero_navio_vertical, direcao_diagonal);
                 // Navio Diagonal
-                if (letra_navio_diagonal != 'A' && letra_navio_diagonal != 'J' && numero_navio_diagonal != 1 && numero_navio_diagonal != 10) {
-                    if (i == numero_navio_diagonal && linha[j] == letra_navio_diagonal) {
-                        tabuleiro[i - 1][j] = 3;
-                    } else if (i == numero_navio_diagonal - 1 && linha[j + direcao_diagonal] == letra_navio_diagonal) {
-                        tabuleiro[i - 1][j] = 3;
-                    } else if (i == numero_navio_diagonal + 1 && linha[j - direcao_diagonal] == letra_navio_diagonal) {
-                        tabuleiro[i - 1][j] = 3;
-                    }
-                }
-
+                Colocar_Navio(tabuleiro, linha, i, j, 3, letra_navio_diagonal, numero_navio_diagonal, direcao_diagonal);
+                // Navio Diagonal 2 
+                Colocar_Navio(tabuleiro, linha, i, j, 3, letra_navio_diagonal__invertida,numero_navio_diagonal_invertida, 1);
+                                
                 printf(" %d", tabuleiro[i-1][j]);
             }
         }
